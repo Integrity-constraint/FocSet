@@ -282,5 +282,11 @@ namespace FocSet
            
             return true;
         }
+
+        private void AsymmetricArms_Click(object sender, RoutedEventArgs e)
+        {
+            PartsPanel.IsVisible = AsymmetricArms.IsChecked == false;
+            PartsPanelAA.IsVisible = AsymmetricArms.IsChecked == true;
+        }
     }
 }
