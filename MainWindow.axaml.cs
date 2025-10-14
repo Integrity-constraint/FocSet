@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace FocSet
 {
@@ -126,6 +127,22 @@ namespace FocSet
                 Part9ComboBox.SelectedItem as string,
                 Part10ComboBox.SelectedItem as string
             };
+
+            for(int i = 0; i < selectedParts.Count; i++)
+            {
+                switch (selectedParts[i])
+                {
+                    case "Megatron":
+                        selectedParts[i] = "MegatronWFC2";
+                        break;
+                    case "Optimus Prime":
+                        selectedParts[i] = "OptimusPrime";
+                        break;
+                    case "Optimus G1":
+                        selectedParts[i] = "OptimusG1";
+                        break;
+                }
+            }
 
             var classesStr = string.Join(",", selectedClasses);
 
