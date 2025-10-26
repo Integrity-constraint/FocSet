@@ -2,11 +2,15 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using System.Threading.Tasks;
+using Tmds.DBus.Protocol;
 
 namespace FocSet
 {
@@ -78,7 +82,7 @@ namespace FocSet
         }
 
 
-        private void AddText()
+        private async void AddText()
         {
             var exePath = ExePathTextBox.Text;
             if (string.IsNullOrEmpty(exePath))
@@ -158,7 +162,7 @@ namespace FocSet
                 return;
             }
 
-            var textToAppend = BuildTextToAppend(variableA, variableB, bodyPart, classesStr, selectedParts);
+            var textToAppend = await BuildTextToAppend(variableA, variableB, bodyPart, classesStr, selectedParts);
 
          
             File.AppendAllText(transcustomizationIniPath, "\n" + textToAppend);
@@ -193,7 +197,7 @@ namespace FocSet
             return false;
         }
 
-        private string BuildTextToAppend(string variableA, string variableB, string bodyPart, string classesStr, List<string> selectedParts)
+        private async Task<string> BuildTextToAppend(string variableA, string variableB, string bodyPart, string classesStr, List<string> selectedParts)
         {
             var textToAppend = $";PartStart={variableA} {variableB}\n";
             textToAppend += $"[{variableB} TnDataProvider_Part]\n";
@@ -209,64 +213,70 @@ namespace FocSet
                 var processedName = name;
                 var shouldProceed = true;
 
-             
                 switch (name)
                 {
                     case "Bee Crown":
                         processedName = "CarCrown";
-                        shouldProceed = ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
                         break;
                     case "HardBack Insect":
                         processedName = "HardBackInsect";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Hardshell Inesct":
                         processedName = "HardshellInsect";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Kickback Insect":
                         processedName = "KickbackInsect";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Sharpshot Insect":
                         processedName = "SharpshotInsect";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Metroplex Head":
                         processedName = "MetroplexHead";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Megatron Crown":
                         processedName = "TankCrown";
-                        shouldProceed = ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Titan Head":
                         processedName = "TitanHead";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Bruticus Head":
                         processedName = "BruticusHead";
-                        shouldProceed = ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Boss Heads are only for heads. Do you want to proceed?");
                         break;
                     case "Optimus Crown":
                         processedName = "TruckCrown";
-                        shouldProceed = ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
                         break;
                     case "StarScream Crown":
                         processedName = "JetCrown";
-                        shouldProceed = ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
+                        shouldProceed = await ShowWarning("Crown Heads are only for heads. Do you want to proceed?");
                         break;
                 }
 
                 if (!shouldProceed)
-                    throw new Exception("User cancelled the operation");
+                    StatusLabel.Text = $"Error: operation cancelled"; ;
 
-            
                 textToAppend += BuildPartPath(processedName, bodyPart);
             }
 
             textToAppend += $";PartEnd={variableA} {variableB}\n";
             return textToAppend;
+        }
+
+        private async Task<bool> ShowWarning(string message)
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard("Warning", message, ButtonEnum.YesNo);
+            var result = await box.ShowAsPopupAsync(this); 
+
+            return result == ButtonResult.Yes;
         }
 
         private string BuildPartPath(string name, string bodyPart)
@@ -287,18 +297,14 @@ namespace FocSet
             }
         }
 
-        private void ShowError(string message)
+        private async void ShowError(string message)
         {
+            var box = MessageBoxManager.GetMessageBoxStandard("Error", message, ButtonEnum.Ok);
+            var result = await box.ShowAsPopupAsync(this);
           
-            StatusLabel.Text = $"Error: {message}";
         }
 
-        private bool ShowWarning(string message)
-        {
-            
-           
-            return true;
-        }
+       
 
         private void AsymmetricArms_Click(object sender, RoutedEventArgs e)
         {

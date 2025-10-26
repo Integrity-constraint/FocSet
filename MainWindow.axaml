@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"  
 		MinWidth="800" MinHeight="500"
         x:Class="FocSet.MainWindow"
-        Title="FocSet">
+        Title="FocSet" Icon="primus.ico">
    
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -40,7 +40,7 @@
                    VerticalAlignment="Center" />
         <TextBox x:Name="ExePathTextBox" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" 
                  />
-        <Button Grid.Row="0" Grid.Column="4" Content="Browse" 
+        <Button Margin="5,0,0,0" Grid.Row="0" Grid.Column="4" Content="Browse" 
                 Click="BrowseExe_Click" />
         
     
